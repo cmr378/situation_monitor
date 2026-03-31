@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Situation Monitor",
+  "version": "0.1.0",
+  "identifier": "com.situation.monitor",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist",
+    "devUrl": "http://127.0.0.1:5173"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Situation Monitor",
+        "width": 1280,
+        "height": 840,
+        "resizable": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "situation-monitor",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Situation Monitor monorepo scaffold",
+  "packageManager": "pnpm@10.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev:desktop": "corepack pnpm --filter @situation-monitor/desktop dev",
+    "dev:service": "corepack pnpm --filter @situation-monitor/intelligence dev",
+    "typecheck": "corepack pnpm -r typecheck",
+    "verify:no-local-contracts": "bash ./scripts/verify-no-local-contracts.sh",
+    "smoke:service": "corepack pnpm --filter @situation-monitor/intelligence smoke"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
