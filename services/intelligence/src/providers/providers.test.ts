@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { mapMassiveRecordToQuote } from './massive.js';
+import { mapMassivePrevAggregateToQuote, mapMassiveRecordToQuote } from './massive.js';
 import { inferTickers, mapNewsApiArticleToRaw } from './newsapi.js';
 
 test('inferTickers extracts uppercase ticker-like tokens', () => {
@@ -58,4 +58,22 @@ test('mapMassiveRecordToQuote marks partial when volume missing', () => {
   assert.equal(mapped.providerStatus, 'partial');
   assert.equal(mapped.price, 420.5);
   assert.equal(mapped.changePercent24h, 3.4);
+});
+
+test('mapMassivePrevAggregateToQuote maps prev aggregate fallback payload', () => {
+  const mapped = mapMassivePrevAggregateToQuote(
+    'AAPL',
+    {
+      ticker: 'AAPL',
+      results: [{ o: 247.91, c: 253.79, v: 49561842, t: 1774987200000 }]
+    },
+    '2026-03-31T13:00:00.000Z'
+  );
+
+  assert.equal(mapped.symbol, 'AAPL');
+  assert.equal(mapped.providerStatus, 'live');
+  assert.equal(mapped.price, 253.79);
+  assert.equal(mapped.volume, 49561842);
+  assert.ok(typeof mapped.changePercent24h === 'number');
+  assert.match(mapped.notes ?? '', /fallback/i);
 });
