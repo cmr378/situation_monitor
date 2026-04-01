@@ -3,7 +3,7 @@
 ## High-Level
 - `packages/shared-types` defines all runtime-facing contracts.
 - `packages/mock-data` provides deterministic fixtures shaped by shared contracts.
-- `services/intelligence` serves mock-backed API routes with lightweight response guards.
+- `services/intelligence` serves API routes with mock default mode and live provider mode.
 - `apps/desktop` renders a placeholder shell using shared contracts and mock payloads.
 
 ## Ownership Boundaries
@@ -23,6 +23,12 @@ ApiResponse<T> = {
   };
 }
 ```
+
+## Runtime Data Sources (V1)
+- Market data provider: Massive API (formerly Polygon)
+- News provider: NewsAPI
+- Briefing generation: dual mode (LLM primary, deterministic template fallback)
+- Provider failures and missing API keys degrade to safe payloads instead of crashing routes.
 
 ## M0 Contract Freeze Gate
 Agent 2 should not progress beyond placeholder rendering and simple mock consumption until Agent 1 freezes payload shapes for:

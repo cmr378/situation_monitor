@@ -30,7 +30,9 @@ const articleOne: SourceArticle = {
   summary: 'Supplier commentary points to sustained enterprise GPU demand.',
   tickers: ['NVDA', 'AMD'],
   sentiment: 'positive',
-  credibilityScore: 0.89
+  credibilityScore: 0.89,
+  provider: 'mock',
+  providerArticleId: 'mock-article-ai-capex-wire'
 };
 
 const articleTwo: SourceArticle = {
@@ -43,7 +45,9 @@ const articleTwo: SourceArticle = {
   summary: 'Analysts diverge on timing of the next policy shift.',
   tickers: ['SPY', 'QQQ'],
   sentiment: 'neutral',
-  credibilityScore: 0.82
+  credibilityScore: 0.82,
+  provider: 'mock',
+  providerArticleId: 'mock-article-fed-tone-news'
 };
 
 const malformedRawArticle: unknown = {
@@ -64,7 +68,9 @@ export const normalizedMalformedArticleFallback: SourceArticle = {
   summary: 'Malformed source data was normalized into a safe default article.',
   tickers: [],
   sentiment: 'neutral',
-  credibilityScore: 0.2
+  credibilityScore: 0.2,
+  provider: 'mock',
+  providerArticleId: 'mock-normalized-malformed-001'
 };
 
 const activeCluster: StoryCluster = {
@@ -75,7 +81,9 @@ const activeCluster: StoryCluster = {
   topicTags: ['ai', 'semiconductors'],
   articles: [articleOne],
   primaryTicker: 'NVDA',
-  lastUpdatedAt: FIXED_TIMESTAMPS.recentStoryUpdate
+  lastUpdatedAt: FIXED_TIMESTAMPS.recentStoryUpdate,
+  relevanceScore: 0.91,
+  dedupeCount: 0
 };
 
 const duplicateSourceCluster: StoryCluster = {
@@ -93,7 +101,9 @@ const duplicateSourceCluster: StoryCluster = {
     }
   ],
   primaryTicker: 'NVDA',
-  lastUpdatedAt: FIXED_TIMESTAMPS.recentStoryUpdate
+  lastUpdatedAt: FIXED_TIMESTAMPS.recentStoryUpdate,
+  relevanceScore: 0.74,
+  dedupeCount: 1
 };
 
 const conflictingSourceCluster: StoryCluster = {
@@ -114,12 +124,16 @@ const conflictingSourceCluster: StoryCluster = {
       summary: 'Contrarian take argues cuts are less likely this quarter.',
       tickers: ['SPY'],
       sentiment: 'negative',
-      credibilityScore: 0.58
+      credibilityScore: 0.58,
+      provider: 'mock',
+      providerArticleId: 'mock-article-fed-tone-blog-counter'
     }
   ],
   primaryTicker: 'SPY',
   conflictNote: 'Conflicting guidance across mainstream and independent sources.',
-  lastUpdatedAt: FIXED_TIMESTAMPS.recentStoryUpdate
+  lastUpdatedAt: FIXED_TIMESTAMPS.recentStoryUpdate,
+  relevanceScore: 0.86,
+  dedupeCount: 0
 };
 
 const staleCluster: StoryCluster = {
@@ -131,7 +145,7 @@ const staleCluster: StoryCluster = {
   lastUpdatedAt: FIXED_TIMESTAMPS.staleStoryUpdate
 };
 
-const watchlist: WatchlistItem[] = [
+export const defaultWatchlist: WatchlistItem[] = [
   {
     symbol: 'NVDA',
     name: 'NVIDIA',
@@ -156,7 +170,9 @@ const liveSnapshot: TickerSnapshot = {
   changePercent24h: 2.3,
   volume: 38100211,
   marketCap: 2480000000000,
-  currency: 'USD'
+  currency: 'USD',
+  provider: 'mock',
+  dataLagSeconds: 30
 };
 
 const missingFieldsSnapshot: TickerSnapshot = {
@@ -165,7 +181,9 @@ const missingFieldsSnapshot: TickerSnapshot = {
   status: 'delayed',
   price: 427.1,
   currency: 'USD',
-  notes: 'Missing volume and marketCap from upstream feed.'
+  notes: 'Missing volume and marketCap from upstream feed.',
+  provider: 'mock',
+  dataLagSeconds: 180
 };
 
 const partialSnapshot: TickerSnapshot = {
@@ -173,7 +191,9 @@ const partialSnapshot: TickerSnapshot = {
   asOf: FIXED_TIMESTAMPS.marketAsOf,
   status: 'partial',
   changePercent24h: -1.4,
-  notes: 'Price unavailable; partial quote only.'
+  notes: 'Price unavailable; partial quote only.',
+  provider: 'mock',
+  dataLagSeconds: 240
 };
 
 const staleAlert: Alert = {
@@ -185,7 +205,9 @@ const staleAlert: Alert = {
   createdAt: FIXED_TIMESTAMPS.staleAlertAt,
   isStale: true,
   acknowledged: false,
-  relatedSymbol: 'SPY'
+  relatedSymbol: 'SPY',
+  triggerCode: 'data_stale',
+  expiresAt: '2026-03-30T14:15:00.000Z'
 };
 
 const activeAlert: Alert = {
@@ -196,7 +218,9 @@ const activeAlert: Alert = {
   category: 'news',
   createdAt: FIXED_TIMESTAMPS.alertAt,
   isStale: false,
-  acknowledged: false
+  acknowledged: false,
+  triggerCode: 'story_conflict',
+  expiresAt: '2026-03-31T16:58:00.000Z'
 };
 
 export const briefingReadyResponse: GetBriefingResponse = {
@@ -211,7 +235,10 @@ export const briefingReadyResponse: GetBriefingResponse = {
       'Conflicting policy headlines are increasing intraday volatility.'
     ],
     relatedClusterIds: [activeCluster.id, conflictingSourceCluster.id],
-    model: 'mock-briefing-v1'
+    model: 'mock-briefing-v1',
+    generator: 'template',
+    confidence: 0.84,
+    promptVersion: 'v1-template'
   },
   meta: baseMeta
 };
@@ -226,6 +253,8 @@ export const briefingUnavailableFallbackResponse: GetBriefingResponse = {
     bullets: [],
     relatedClusterIds: [],
     model: 'mock-briefing-v1',
+    generator: 'template',
+    promptVersion: 'v1-template',
     fallbackMessage: 'Please retry in a few minutes.'
   },
   meta: baseMeta
@@ -241,6 +270,8 @@ export const briefingFailureResponse: GetBriefingResponse = {
     bullets: [],
     relatedClusterIds: [],
     model: 'mock-briefing-v1',
+    generator: 'template',
+    promptVersion: 'v1-template',
     failureReason: 'upstream_context_timeout',
     fallbackMessage: 'Fallback narrative unavailable. Use story feed directly.'
   },
@@ -285,7 +316,7 @@ export const storiesStaleResponse: GetStoriesResponse = {
 export const tickersPrimaryResponse: GetTickersResponse = {
   data: {
     snapshots: [liveSnapshot],
-    watchlist
+    watchlist: defaultWatchlist
   },
   meta: baseMeta
 };
@@ -293,7 +324,7 @@ export const tickersPrimaryResponse: GetTickersResponse = {
 export const tickersMissingFieldsResponse: GetTickersResponse = {
   data: {
     snapshots: [missingFieldsSnapshot],
-    watchlist
+    watchlist: defaultWatchlist
   },
   meta: baseMeta
 };
@@ -301,7 +332,7 @@ export const tickersMissingFieldsResponse: GetTickersResponse = {
 export const tickersPartialResponse: GetTickersResponse = {
   data: {
     snapshots: [partialSnapshot],
-    watchlist
+    watchlist: defaultWatchlist
   },
   meta: baseMeta
 };

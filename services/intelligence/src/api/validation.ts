@@ -56,6 +56,14 @@ function assertSourceArticle(article: unknown): asserts article is SourceArticle
   if (!Array.isArray(article.tickers) || article.tickers.some((item) => typeof item !== 'string')) {
     throw new Error('SourceArticle.tickers must be string[]');
   }
+
+  if ('provider' in article && article.provider !== undefined && article.provider !== 'newsapi' && article.provider !== 'mock') {
+    throw new Error('SourceArticle.provider must be newsapi|mock');
+  }
+
+  if ('providerArticleId' in article && article.providerArticleId !== undefined && typeof article.providerArticleId !== 'string') {
+    throw new Error('SourceArticle.providerArticleId must be string');
+  }
 }
 
 function assertStoryCluster(cluster: unknown): asserts cluster is StoryCluster {
@@ -67,11 +75,23 @@ function assertStoryCluster(cluster: unknown): asserts cluster is StoryCluster {
     throw new Error('StoryCluster.id/title/summary are required strings');
   }
 
+  if (cluster.status !== 'active' && cluster.status !== 'stale' && cluster.status !== 'conflicting') {
+    throw new Error('StoryCluster.status is invalid');
+  }
+
   if (!Array.isArray(cluster.articles)) {
     throw new Error('StoryCluster.articles must be an array');
   }
 
   cluster.articles.forEach(assertSourceArticle);
+
+  if ('relevanceScore' in cluster && cluster.relevanceScore !== undefined && typeof cluster.relevanceScore !== 'number') {
+    throw new Error('StoryCluster.relevanceScore must be number');
+  }
+
+  if ('dedupeCount' in cluster && cluster.dedupeCount !== undefined && typeof cluster.dedupeCount !== 'number') {
+    throw new Error('StoryCluster.dedupeCount must be number');
+  }
 }
 
 function assertTickerSnapshot(snapshot: unknown): asserts snapshot is TickerSnapshot {
@@ -81,6 +101,23 @@ function assertTickerSnapshot(snapshot: unknown): asserts snapshot is TickerSnap
 
   if (typeof snapshot.symbol !== 'string' || typeof snapshot.asOf !== 'string') {
     throw new Error('TickerSnapshot.symbol and asOf are required strings');
+  }
+
+  if (
+    snapshot.status !== 'live' &&
+    snapshot.status !== 'delayed' &&
+    snapshot.status !== 'partial' &&
+    snapshot.status !== 'unavailable'
+  ) {
+    throw new Error('TickerSnapshot.status must be live|delayed|partial|unavailable');
+  }
+
+  if ('provider' in snapshot && snapshot.provider !== undefined && snapshot.provider !== 'massive' && snapshot.provider !== 'mock') {
+    throw new Error('TickerSnapshot.provider must be massive|mock');
+  }
+
+  if ('dataLagSeconds' in snapshot && snapshot.dataLagSeconds !== undefined && typeof snapshot.dataLagSeconds !== 'number') {
+    throw new Error('TickerSnapshot.dataLagSeconds must be number');
   }
 }
 
@@ -102,6 +139,18 @@ function assertBriefing(data: unknown): asserts data is Briefing {
   if (typeof data.id !== 'string' || typeof data.summary !== 'string' || !Array.isArray(data.bullets)) {
     throw new Error('Briefing.id/summary/bullets are required');
   }
+
+  if (data.status !== 'ready' && data.status !== 'unavailable' && data.status !== 'failed') {
+    throw new Error('Briefing.status is invalid');
+  }
+
+  if ('generator' in data && data.generator !== undefined && data.generator !== 'llm' && data.generator !== 'template') {
+    throw new Error('Briefing.generator must be llm|template');
+  }
+
+  if ('confidence' in data && data.confidence !== undefined && typeof data.confidence !== 'number') {
+    throw new Error('Briefing.confidence must be number');
+  }
 }
 
 function assertAlert(alert: unknown): asserts alert is Alert {
@@ -111,6 +160,20 @@ function assertAlert(alert: unknown): asserts alert is Alert {
 
   if (typeof alert.id !== 'string' || typeof alert.title !== 'string' || typeof alert.isStale !== 'boolean') {
     throw new Error('Alert.id/title/isStale are required');
+  }
+
+  if (alert.level !== 'info' && alert.level !== 'warning' && alert.level !== 'critical') {
+    throw new Error('Alert.level is invalid');
+  }
+
+  if ('triggerCode' in alert && alert.triggerCode !== undefined) {
+    if (alert.triggerCode !== 'story_conflict' && alert.triggerCode !== 'price_move' && alert.triggerCode !== 'data_stale') {
+      throw new Error('Alert.triggerCode is invalid');
+    }
+  }
+
+  if ('expiresAt' in alert && alert.expiresAt !== undefined && typeof alert.expiresAt !== 'string') {
+    throw new Error('Alert.expiresAt must be a string');
   }
 }
 

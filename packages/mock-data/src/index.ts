@@ -9,6 +9,7 @@ export {
   briefingReadyResponse,
   briefingScenarios,
   briefingUnavailableFallbackResponse,
+  defaultWatchlist,
   endpointFallbackScenarios,
   endpointUnavailableFallback,
   malformedSourceNormalizationFixture,

@@ -28,6 +28,8 @@ ApiResponse<T> = {
 - `tickers: string[]`
 - `sentiment?: 'positive' | 'neutral' | 'negative'`
 - `credibilityScore?: number`
+- `provider?: 'newsapi' | 'mock'`
+- `providerArticleId?: string`
 
 ### `StoryCluster`
 - `id: string`
@@ -39,6 +41,8 @@ ApiResponse<T> = {
 - `primaryTicker?: string`
 - `conflictNote?: string`
 - `lastUpdatedAt: string`
+- `relevanceScore?: number`
+- `dedupeCount?: number`
 
 ### `TickerSnapshot`
 - `symbol: string`
@@ -50,6 +54,8 @@ ApiResponse<T> = {
 - `marketCap?: number`
 - `currency?: string`
 - `notes?: string`
+- `provider?: 'massive' | 'mock'`
+- `dataLagSeconds?: number`
 
 ### `Briefing`
 - `id: string`
@@ -62,6 +68,9 @@ ApiResponse<T> = {
 - `model: string`
 - `failureReason?: string`
 - `fallbackMessage?: string`
+- `generator?: 'llm' | 'template'`
+- `confidence?: number`
+- `promptVersion?: string`
 
 ### `WatchlistItem`
 - `symbol: string`
@@ -81,13 +90,18 @@ ApiResponse<T> = {
 - `isStale: boolean`
 - `acknowledged: boolean`
 - `relatedSymbol?: string`
+- `triggerCode?: 'story_conflict' | 'price_move' | 'data_stale'`
+- `expiresAt?: string`
 
 ### `EndpointUnavailable` (mock fallback helper)
 - `reason: 'endpoint_unavailable'`
 - `message: string`
 - `retryAfterSeconds?: number`
 
-## Endpoint Shapes (Frozen for M0)
+## Endpoint Shapes (Frozen Root Contracts)
+
+`GET /briefing`, `GET /stories`, `GET /tickers`, and `GET /alerts` keep their existing root response shapes.
+V1 additions are optional fields only.
 
 ### `GET /briefing`
 Type: `ApiResponse<Briefing>`
@@ -105,7 +119,10 @@ Type: `ApiResponse<Briefing>`
       "Conflicting policy headlines are increasing intraday volatility"
     ],
     "relatedClusterIds": ["cluster-ai-capex", "cluster-fed-tone"],
-    "model": "mock-briefing-v1"
+    "model": "mock-briefing-v1",
+    "generator": "template",
+    "confidence": 0.84,
+    "promptVersion": "v1-template"
   },
   "meta": {
     "generatedAt": "2026-03-31T13:00:00.000Z",
@@ -129,7 +146,9 @@ Type: `ApiResponse<{ clusters: StoryCluster[] }>`
         "topicTags": ["ai", "semiconductors"],
         "articles": [],
         "primaryTicker": "NVDA",
-        "lastUpdatedAt": "2026-03-31T12:45:00.000Z"
+        "lastUpdatedAt": "2026-03-31T12:45:00.000Z",
+        "relevanceScore": 0.91,
+        "dedupeCount": 0
       }
     ]
   },
@@ -155,7 +174,9 @@ Type: `ApiResponse<{ snapshots: TickerSnapshot[]; watchlist: WatchlistItem[] }>`
         "changePercent24h": 2.3,
         "volume": 38100211,
         "marketCap": 2480000000000,
-        "currency": "USD"
+        "currency": "USD",
+        "provider": "mock",
+        "dataLagSeconds": 30
       }
     ],
     "watchlist": [
@@ -189,7 +210,9 @@ Type: `ApiResponse<{ alerts: Alert[] }>`
         "category": "news",
         "createdAt": "2026-03-31T12:58:00.000Z",
         "isStale": false,
-        "acknowledged": false
+        "acknowledged": false,
+        "triggerCode": "story_conflict",
+        "expiresAt": "2026-03-31T16:58:00.000Z"
       }
     ]
   },
@@ -199,3 +222,9 @@ Type: `ApiResponse<{ alerts: Alert[] }>`
   }
 }
 ```
+
+## Runtime Provider Notes (V1)
+- Market snapshots in live mode are sourced from Massive API (formerly Polygon).
+- Story ingestion in live mode is sourced from NewsAPI.
+- Briefing generation supports dual mode: LLM first, deterministic template fallback.
+- Missing API keys in live mode produce safe fallback output instead of route crashes.

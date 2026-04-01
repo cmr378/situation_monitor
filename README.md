@@ -25,6 +25,23 @@ Useful dev commands:
 - `pnpm dev:service`
 - `pnpm dev:desktop`
 
+## Service Runtime Modes
+
+`services/intelligence` supports two runtime modes:
+- `mock` (default): deterministic fixtures and scenario-based payloads.
+- `live`: provider-backed ingestion with safe fallbacks.
+
+Live mode environment variables:
+- `INTELLIGENCE_DATA_MODE=live`
+- `MASSIVE_API_KEY` (or `POLYGON_API_KEY` as fallback alias)
+- `NEWS_API_KEY`
+- `LLM_API_KEY` (or `OPENAI_API_KEY`) for LLM briefing generation
+
+Optional tuning:
+- `WATCHLIST_SYMBOLS=NVDA,MSFT,SPY`
+- `NEWS_API_QUERY=(markets OR macro OR AI)`
+- `INTELLIGENCE_CACHE_TTL_MS=30000`
+
 ## Two-Agent Workflow
 
 - Agent 1 owns `services/intelligence` and canonical contracts.

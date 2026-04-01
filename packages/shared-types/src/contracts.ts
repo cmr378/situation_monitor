@@ -23,6 +23,8 @@ export interface SourceArticle {
   tickers: string[];
   sentiment?: Sentiment;
   credibilityScore?: number;
+  provider?: 'newsapi' | 'mock';
+  providerArticleId?: string;
 }
 
 export interface StoryCluster {
@@ -35,6 +37,8 @@ export interface StoryCluster {
   primaryTicker?: string;
   conflictNote?: string;
   lastUpdatedAt: string;
+  relevanceScore?: number;
+  dedupeCount?: number;
 }
 
 export interface TickerSnapshot {
@@ -47,6 +51,8 @@ export interface TickerSnapshot {
   marketCap?: number;
   currency?: string;
   notes?: string;
+  provider?: 'massive' | 'mock';
+  dataLagSeconds?: number;
 }
 
 export interface Briefing {
@@ -60,6 +66,9 @@ export interface Briefing {
   model: string;
   failureReason?: string;
   fallbackMessage?: string;
+  generator?: 'llm' | 'template';
+  confidence?: number;
+  promptVersion?: string;
 }
 
 export interface WatchlistItem {
@@ -81,6 +90,8 @@ export interface Alert {
   isStale: boolean;
   acknowledged: boolean;
   relatedSymbol?: string;
+  triggerCode?: 'story_conflict' | 'price_move' | 'data_stale';
+  expiresAt?: string;
 }
 
 export interface EndpointUnavailable {
