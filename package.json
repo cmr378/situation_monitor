@@ -11,6 +11,7 @@
     "dev:desktop": "corepack pnpm --filter @situation-monitor/desktop dev",
     "dev:service": "corepack pnpm --filter @situation-monitor/intelligence dev",
     "typecheck": "corepack pnpm -r typecheck",
+    "verify:repo-hygiene": "bash ./scripts/verify-repo-hygiene.sh",
     "verify:no-local-contracts": "bash ./scripts/verify-no-local-contracts.sh",
     "smoke:service": "corepack pnpm --filter @situation-monitor/intelligence smoke"
   },

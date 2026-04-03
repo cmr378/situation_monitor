@@ -4,12 +4,16 @@
 - `packages/shared-types` defines all runtime-facing contracts.
 - `packages/mock-data` provides deterministic fixtures shaped by shared contracts.
 - `services/intelligence` serves API routes with mock default mode and live provider mode.
-- `apps/desktop` renders a placeholder shell using shared contracts and mock payloads.
+- `apps/desktop` renders a configurable command shell using shared contracts and mock payloads.
 
 ## Ownership Boundaries
 - Agent 1: contract authority + intelligence service
 - Agent 2: desktop app shell
 - Shared: contracts, mock fixtures, mirrored API contract docs
+
+## Repo Hygiene
+- Tracked `node_modules`, `dist`, `.DS_Store`, and `*.tsbuildinfo` files are forbidden.
+- Run `pnpm verify:repo-hygiene` with the other baseline checks before pushing changes.
 
 ## API Shape Standard
 All M0 endpoint responses use:
@@ -36,3 +40,7 @@ Agent 2 should not progress beyond placeholder rendering and simple mock consump
 - `GET /stories`
 - `GET /tickers`
 - `GET /alerts`
+
+## Desktop Shell Status
+- The desktop shell now supports layout presets, drag/resize interactions, theming, and widget context menus.
+- The shell remains mock-driven until the follow-up service integration step.

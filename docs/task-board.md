@@ -8,14 +8,15 @@
 5. Document endpoint examples in `docs/api-contract.md` and keep docs mirrored with shared types.
 
 ## Agent 2: Desktop Shell
-1. Build desktop layout shell with placeholders for top bar, story feed, briefing panel, ticker/watchlist panel, and timeline.
+1. Build a configurable desktop layout shell with top bar, story feed, briefing panel, ticker/watchlist panel, and timeline widgets.
 2. Consume shared contracts from `packages/shared-types` directly (no local redefinition).
-3. Wire sections to `packages/mock-data` payloads.
-4. Implement loading, empty, error, and stale UI states at skeleton level.
-5. Avoid heavy styling and final polish during M0.
+3. Wire sections to `packages/mock-data` payloads while the shell remains mock-driven.
+4. Add layout presets, drag/resize interactions, theming, and widget context menus without redefining runtime contracts locally.
+5. Follow up with a typed service-backed data layer and panel-level fallbacks in the next integration phase.
 
 ## Shared Rules
 - Prefer additive changes over refactors.
 - Keep PRs small and reviewable.
 - Avoid cross-boundary edits unless explicitly required.
 - Avoid broad formatting-only changes.
+- Run `pnpm verify:repo-hygiene` before pushing branches.

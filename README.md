@@ -4,7 +4,7 @@ Situation Monitor is a desktop command-center app for tracking market, AI, and m
 
 ## Monorepo Structure
 
-- `apps/desktop` - Tauri target + Vite/React UI shell (placeholder sections only)
+- `apps/desktop` - Tauri target + Vite/React command shell with configurable widgets, theming, and mock-backed sections
 - `services/intelligence` - Fastify mock-backed local service
 - `packages/shared-types` - canonical TypeScript runtime-facing contracts (single source of truth)
 - `packages/mock-data` - deterministic fixtures for normal, degraded, and failure states
@@ -19,11 +19,22 @@ Situation Monitor is a desktop command-center app for tracking market, AI, and m
    - `pnpm install`
    - `pnpm -r typecheck`
    - `pnpm smoke:service`
+   - `pnpm verify:repo-hygiene`
    - `pnpm verify:no-local-contracts`
 
 Useful dev commands:
 - `pnpm dev:service`
 - `pnpm dev:desktop`
+
+## Desktop Shell Status
+
+`apps/desktop` now includes:
+- Configurable widget layout presets
+- Drag and resize interactions
+- Light and dark theming
+- Widget add, replace, and delete context menus
+
+The desktop remains mock-driven in this branch. Service-backed polling and panel-level fallback behavior land in phase 2.
 
 ## Service Runtime Modes
 
@@ -54,7 +65,7 @@ Optional tuning:
 ## Development Sequence
 
 1. Contracts + mocks
-2. Desktop shell against mocks
+2. Desktop shell against mocks with interactive dashboard behavior
 3. Local intelligence service
 4. Wire UI to service
 
