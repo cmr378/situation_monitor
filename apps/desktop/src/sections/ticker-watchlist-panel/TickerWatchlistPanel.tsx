@@ -5,13 +5,27 @@ type TickerWatchlistPanelProps = {
   response: GetTickersResponse;
   partialResponse: GetTickersResponse;
   missingResponse: GetTickersResponse;
+  sourceLabel: string;
+  sourceDetail: string;
+  isFallback: boolean;
 };
 
-export function TickerWatchlistPanel({ title, response, partialResponse, missingResponse }: TickerWatchlistPanelProps) {
+export function TickerWatchlistPanel({
+  title,
+  response,
+  partialResponse,
+  missingResponse,
+  sourceLabel,
+  sourceDetail,
+  isFallback
+}: TickerWatchlistPanelProps) {
   return (
     <section className="panel">
       <h2>{title}</h2>
       <p className="subtle">Market snapshots + conviction watchlist</p>
+      <p className={`subtle panel__status ${isFallback ? 'panel__status--fallback' : ''}`}>
+        Source: {sourceLabel}
+      </p>
 
       <div className="meta-grid">
         <div>
@@ -29,6 +43,10 @@ export function TickerWatchlistPanel({ title, response, partialResponse, missing
         <div>
           <span className="subtle">Missing-field note</span>
           <p>{missingResponse.data.snapshots[0]?.notes ?? 'n/a'}</p>
+        </div>
+        <div>
+          <span className="subtle">Request status</span>
+          <p>{sourceDetail}</p>
         </div>
       </div>
 

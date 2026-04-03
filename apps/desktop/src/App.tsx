@@ -2,12 +2,12 @@ import {
   alertsScenarios,
   briefingFailureResponse,
   briefingScenarios,
-  endpointUnavailableFallback,
   storiesScenarios,
   tickersScenarios
 } from '@situation-monitor/mock-data';
 import { useEffect, useRef, useState } from 'react';
 
+import { useDashboardData } from './data/useDashboardData.js';
 import { BriefingPanel } from './sections/briefing-panel/BriefingPanel.js';
 import { StoryFeed } from './sections/story-feed/StoryFeed.js';
 import { TickerWatchlistPanel } from './sections/ticker-watchlist-panel/TickerWatchlistPanel.js';
@@ -168,6 +168,7 @@ export function App() {
   const [interaction, setInteraction] = useState<InteractionState | null>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
+  const dashboardData = useDashboardData();
 
   const visibleWidgetCount = Object.values(visible).filter(Boolean).length;
   const hiddenWidgetIds = widgetIds.filter((widgetId) => !visible[widgetId]);
@@ -427,9 +428,12 @@ export function App() {
       return (
         <StoryFeed
           title="Story Feed"
-          response={storiesScenarios.default}
+          response={dashboardData.stories.response}
           emptyResponse={storiesScenarios.empty}
           staleResponse={storiesScenarios.stale}
+          sourceLabel={dashboardData.stories.status.label}
+          sourceDetail={dashboardData.stories.status.detail}
+          isFallback={dashboardData.stories.status.isFallback}
         />
       );
     }
@@ -438,10 +442,12 @@ export function App() {
       return (
         <BriefingPanel
           title="Briefing"
-          readyResponse={briefingScenarios.ready}
+          readyResponse={dashboardData.briefing.response}
           unavailableResponse={briefingScenarios.unavailable}
           failedResponse={briefingFailureResponse}
-          endpointFallbackMessage={endpointUnavailableFallback.data.message}
+          sourceLabel={dashboardData.briefing.status.label}
+          sourceDetail={dashboardData.briefing.status.detail}
+          isFallback={dashboardData.briefing.status.isFallback}
         />
       );
     }
@@ -450,21 +456,25 @@ export function App() {
       return (
         <TickerWatchlistPanel
           title="Ticker + Watchlist"
-          response={tickersScenarios.default}
+          response={dashboardData.tickers.response}
           partialResponse={tickersScenarios.partial}
           missingResponse={tickersScenarios.missingFields}
+          sourceLabel={dashboardData.tickers.status.label}
+          sourceDetail={dashboardData.tickers.status.detail}
+          isFallback={dashboardData.tickers.status.isFallback}
         />
       );
     }
 
     if (widgetId === 'market-pulse') {
-      const snapshot = tickersScenarios.default.data.snapshots[0];
-      const alertCount = alertsScenarios.default.data.alerts.length;
+      const snapshot = dashboardData.tickers.response.data.snapshots[0];
+      const alertCount = dashboardData.alerts.response.data.alerts.length;
 
       return (
         <section className="panel">
           <h2>Market Pulse</h2>
           <p className="subtle">Compact market condition widget</p>
+          <p className="subtle panel__status">Source: {dashboardData.overallSourceLabel}</p>
           <div className="meta-grid">
             <div>
               <span className="subtle">Lead Symbol</span>
@@ -488,6 +498,7 @@ export function App() {
         <section className="panel">
           <h2>Scenario Inspector</h2>
           <p className="subtle">Mock runtime scenario quick switch reference</p>
+          <p className="subtle panel__status">Endpoint base: {dashboardData.baseUrl}</p>
           <ul>
             <li>
               <strong>Briefing:</strong> ready | unavailable | failed
@@ -498,20 +509,35 @@ export function App() {
             <li>
               <strong>Tickers:</strong> default | partial | missingFields
             </li>
+            <li>
+              <strong>Current source:</strong> {dashboardData.overallSourceLabel}
+            </li>
           </ul>
         </section>
       );
     }
 
-    return <Timeline title="Timeline / Alerts" response={alertsScenarios.default} emptyResponse={alertsScenarios.empty} />;
+    return (
+      <Timeline
+        title="Timeline / Alerts"
+        response={dashboardData.alerts.response}
+        emptyResponse={alertsScenarios.empty}
+        sourceLabel={dashboardData.alerts.status.label}
+        sourceDetail={dashboardData.alerts.status.detail}
+        isFallback={dashboardData.alerts.status.isFallback}
+      />
+    );
   }
 
   return (
     <div className="layout" data-theme={theme}>
       <TopBar
-        generatedAt={briefingScenarios.ready.meta?.generatedAt ?? 'n/a'}
+        fallbackCount={dashboardData.fallbackCount}
+        generatedAt={dashboardData.generatedAt}
         isDarkMode={theme === 'dark'}
         onToggleTheme={() => setTheme((previous) => (previous === 'dark' ? 'light' : 'dark'))}
+        refreshLabel={dashboardData.refreshLabel}
+        sourceLabel={dashboardData.overallSourceLabel}
       />
 
       <section className="panel controls">

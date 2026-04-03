@@ -5,7 +5,9 @@ type BriefingPanelProps = {
   readyResponse: GetBriefingResponse;
   unavailableResponse: GetBriefingResponse;
   failedResponse: GetBriefingResponse;
-  endpointFallbackMessage: string;
+  sourceLabel: string;
+  sourceDetail: string;
+  isFallback: boolean;
 };
 
 export function BriefingPanel({
@@ -13,7 +15,9 @@ export function BriefingPanel({
   readyResponse,
   unavailableResponse,
   failedResponse,
-  endpointFallbackMessage
+  sourceLabel,
+  sourceDetail,
+  isFallback
 }: BriefingPanelProps) {
   const briefing = readyResponse.data;
 
@@ -21,6 +25,9 @@ export function BriefingPanel({
     <section className="panel">
       <h2>{title}</h2>
       <p className="subtle">Model: {briefing.model}</p>
+      <p className={`subtle panel__status ${isFallback ? 'panel__status--fallback' : ''}`}>
+        Source: {sourceLabel}
+      </p>
 
       <h3>{briefing.headline}</h3>
       <p>{briefing.summary}</p>
@@ -41,8 +48,8 @@ export function BriefingPanel({
           <p>{failedResponse.data.failureReason ?? 'n/a'}</p>
         </div>
         <div>
-          <span className="subtle">Endpoint fallback</span>
-          <p>{endpointFallbackMessage}</p>
+          <span className="subtle">Request status</span>
+          <p>{sourceDetail}</p>
         </div>
       </div>
     </section>

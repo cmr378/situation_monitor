@@ -34,7 +34,7 @@ Useful dev commands:
 - Light and dark theming
 - Widget add, replace, and delete context menus
 
-The desktop remains mock-driven in this branch. Service-backed polling and panel-level fallback behavior land in phase 2.
+The desktop now polls the local intelligence service every 30 seconds and falls back per panel to deterministic mock data if an endpoint is unavailable.
 
 ## Service Runtime Modes
 
@@ -53,6 +53,9 @@ Optional tuning:
 - `NEWS_API_QUERY=(markets OR macro OR AI)`
 - `INTELLIGENCE_CACHE_TTL_MS=30000`
 
+Desktop runtime environment:
+- `VITE_INTELLIGENCE_BASE_URL=http://127.0.0.1:4000`
+
 ## Two-Agent Workflow
 
 - Agent 1 owns `services/intelligence` and canonical contracts.
@@ -67,7 +70,7 @@ Optional tuning:
 1. Contracts + mocks
 2. Desktop shell against mocks with interactive dashboard behavior
 3. Local intelligence service
-4. Wire UI to service
+4. Wire UI to service with panel-level mock fallback
 
 ## Tauri + Vite Expectations
 

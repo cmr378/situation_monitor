@@ -10,9 +10,9 @@
 ## Agent 2: Desktop Shell
 1. Build a configurable desktop layout shell with top bar, story feed, briefing panel, ticker/watchlist panel, and timeline widgets.
 2. Consume shared contracts from `packages/shared-types` directly (no local redefinition).
-3. Wire sections to `packages/mock-data` payloads while the shell remains mock-driven.
+3. Poll the local intelligence service through one typed desktop data layer.
 4. Add layout presets, drag/resize interactions, theming, and widget context menus without redefining runtime contracts locally.
-5. Follow up with a typed service-backed data layer and panel-level fallbacks in the next integration phase.
+5. Fall back per panel to deterministic mock payloads when service requests fail.
 
 ## Shared Rules
 - Prefer additive changes over refactors.

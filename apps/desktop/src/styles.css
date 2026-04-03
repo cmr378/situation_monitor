@@ -139,6 +139,11 @@ button.is-active {
   color: var(--text-muted);
 }
 
+.status-pill--warning {
+  border-color: #8c6a2f;
+  color: #ffd27d;
+}
+
 .meta-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -176,6 +181,14 @@ p {
   margin-top: 6px;
   color: var(--text-muted);
   font-size: 0.86rem;
+}
+
+.panel__status {
+  margin-top: 4px;
+}
+
+.panel__status--fallback {
+  color: #ffd27d;
 }
 
 ul {
@@ -348,6 +361,15 @@ li {
 .layout[data-theme='light'] .context-menu {
   background: #ffffff;
   box-shadow: 0 10px 24px rgba(17, 33, 58, 0.18);
+}
+
+.layout[data-theme='light'] .status-pill--warning {
+  border-color: #d69b28;
+  color: #7a5615;
+}
+
+.layout[data-theme='light'] .panel__status--fallback {
+  color: #8f5a00;
 }
 
 @media (max-width: 900px) {

@@ -4,7 +4,7 @@
 - `packages/shared-types` defines all runtime-facing contracts.
 - `packages/mock-data` provides deterministic fixtures shaped by shared contracts.
 - `services/intelligence` serves API routes with mock default mode and live provider mode.
-- `apps/desktop` renders a configurable command shell using shared contracts and mock payloads.
+- `apps/desktop` renders a configurable command shell, polls the intelligence service, and falls back per panel to mock payloads when endpoints fail.
 
 ## Ownership Boundaries
 - Agent 1: contract authority + intelligence service
@@ -43,4 +43,5 @@ Agent 2 should not progress beyond placeholder rendering and simple mock consump
 
 ## Desktop Shell Status
 - The desktop shell now supports layout presets, drag/resize interactions, theming, and widget context menus.
-- The shell remains mock-driven until the follow-up service integration step.
+- The shell fetches `/briefing`, `/stories`, `/tickers`, and `/alerts` in parallel every 30 seconds.
+- Panel failures degrade to deterministic mock payloads instead of taking down the full dashboard.

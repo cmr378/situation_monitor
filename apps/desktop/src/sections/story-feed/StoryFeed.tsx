@@ -5,13 +5,27 @@ type StoryFeedProps = {
   response: GetStoriesResponse;
   emptyResponse: GetStoriesResponse;
   staleResponse: GetStoriesResponse;
+  sourceLabel: string;
+  sourceDetail: string;
+  isFallback: boolean;
 };
 
-export function StoryFeed({ title, response, emptyResponse, staleResponse }: StoryFeedProps) {
+export function StoryFeed({
+  title,
+  response,
+  emptyResponse,
+  staleResponse,
+  sourceLabel,
+  sourceDetail,
+  isFallback
+}: StoryFeedProps) {
   return (
     <section className="panel">
       <h2>{title}</h2>
       <p className="subtle">Cluster intelligence and dedupe overview</p>
+      <p className={`subtle panel__status ${isFallback ? 'panel__status--fallback' : ''}`}>
+        Source: {sourceLabel}
+      </p>
 
       <div className="meta-grid">
         <div>
@@ -25,6 +39,10 @@ export function StoryFeed({ title, response, emptyResponse, staleResponse }: Sto
         <div>
           <span className="subtle">Stale sample</span>
           <p>{staleResponse.data.clusters[0]?.title ?? 'none'}</p>
+        </div>
+        <div>
+          <span className="subtle">Request status</span>
+          <p>{sourceDetail}</p>
         </div>
       </div>
 
